@@ -1,0 +1,45 @@
+# Template for a dev instance. Copy it, don't edit it:
+#
+#     cp instances/example.yml instances/myapp.yml
+#     ./up.sh instances/myapp.yml
+#
+# Real instance files are gitignored — they name your machine's key path and
+# whatever ports and services that project needs.
+
+name: myapp                    # container name; volumes are myapp-workspace,
+                               # myapp-agent-home, myapp-secrets
+
+network: myapp-net             # its own bridge, isolated from other instances
+subnet: 192.168.110.0/24       # must not overlap another instance or the
+                               # default network (192.168.64.0/24).
+                               # gateway is always .1 -> 192.168.110.1
+
+domain: internal               # reachable as myapp.internal from your Mac, so
+                               # ~/.ssh/config survives the container IP moving.
+                               # Same domain in every instance file.
+
+# Your own public key, authorised for both admin and agent. The script reads
+# this file and nothing else in ~/.ssh — it generates no keys of its own.
+ssh_key: ~/.ssh/id_ed25519.pub
+
+cpus: 4
+memory: 8g
+
+# Published to the host, so http://localhost:5174 works on your Mac.
+# ssh is not here on purpose — you reach it as myapp.internal on port 22.
+# Host side must be unique across instances; container side need not be.
+ports:
+  - 5174:5174
+  - 8080:8080
+
+# Sidecar containers on this instance's network. Format:
+#   name=image [/container/path/to/persist] [KEY=VALUE ...]
+#
+# Each runs as myapp-<name> and answers to myapp-<name>.internal. No ports are
+# published, so nothing outside this instance can reach them.
+#
+# A /path token gets a named volume (myapp-<name>-data) that survives rebuilds;
+# without one, the sidecar keeps nothing.
+services:
+  - redis=redis:7-alpine
+  # - pg=postgres:16-alpine /var/lib/postgresql/data POSTGRES_PASSWORD=dev POSTGRES_DB=app

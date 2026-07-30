@@ -1,0 +1,10 @@
+# Real instance files are personal — they name your key path, your ports, your
+# subnets. Only the template is tracked.
+instances/*.yml
+!instances/example.yml
+
+# Never commit secrets. They belong on the box's /srv/secrets volume.
+secrets/
+*.env
+.env.*
+!.env.example
