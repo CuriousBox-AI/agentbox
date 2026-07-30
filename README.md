@@ -276,3 +276,7 @@ Dockerfile              users, sudoers, sshd, /srv/secrets and /workspace mountp
 up.sh                   build, network, volumes, run, fix permissions
 instances/<name>.yml    one file per dev box
 ```
+
+## License
+
+MIT — see [LICENSE](LICENSE).
